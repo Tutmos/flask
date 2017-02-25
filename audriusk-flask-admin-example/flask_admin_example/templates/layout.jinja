@@ -1,0 +1,53 @@
+<!doctype html>
+
+<meta charset=utf-8>
+<title>{% block title %}{% endblock %}</title>
+<link rel=stylesheet href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+<link rel=stylesheet href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}">
+<link rel=stylesheet href="{{ url_for('static', filename='css/style.css') }}">
+
+<div class=container>
+  <div class="navbar navbar-fixed-top">
+    <div class=navbar-inner>
+      <div class=container>
+        <span class=brand>Flask-Admin example</span>
+        <ul class=nav>
+          {% for endpoint in [
+            'index',
+          ] %}
+          <li{% if endpoint == request.endpoint %} class=active{% endif %}>
+            <a href="{{ url_for(endpoint) }}">{{ endpoint.capitalize() }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+        <ul class="nav pull-right">
+          {% if is_admin() %}
+          <li><a href=" {{ url_for('admin.index') }}">Admin</a></li>
+          <li class="divider-vertical"></li>
+          {% endif %}
+          {% set endpoint = 'login' if current_user.is_anonymous() else 'logout' %}
+          <li{% if endpoint == request.endpoint %} class=active{% endif %}>
+            <a href="{{ url_for(endpoint) }}">{{ endpoint.capitalize() }}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+{% with messages = get_flashed_messages(with_categories=True) %}
+  {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert{{ ' alert-%s' % category if category != 'message' else '' }}">
+      <button type=button class=close data-dismiss="alert">&times;</button>
+      {{ message }}
+    </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+{% endblock %}
+</div>
+
+<script src="{{ url_for('static', filename='js/jquery-1.8.3.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
